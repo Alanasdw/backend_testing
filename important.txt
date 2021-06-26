@@ -1,0 +1,39 @@
+https://pkg.go.dev/github.com/gocelery/gocelery
+
+https://github.com/gocelery/gocelery
+
+https://stackoverflow.com/questions/15809811/celery-tasks-that-need-to-run-in-priority
+
+https://redis.io/topics/quickstart
+
+// this is for redis make test
+sudo apt-get install tcl
+
+https://github.com/celery/celery/issues/4028
+
+need to write a script to start up redis then start celery
+// maybe docker-compose?
+
+start the daemonized redis-server with the command below( in the /redis-stable)
+redis-server --daemonize yes
+
+// need to think to have compiling and running workers
+
+// for differnet tasks
+https://stackoverflow.com/questions/19670534/assign-different-tasks-to-different-celery-workers
+
+// seems important in the comments
+https://docs.celeryproject.org/en/latest/reference/celery.bin.multi.html
+
+
+// the worker part seems to just be celery?
+// maybe daemonize the celery workers and have the producer be up when called?
+
+// 1 compiler worker and 30 running workers per machine?
+// the compiled program will sit in the same glusterfs as other test case inputs?
+
+
+
+// for the worker machines
+// python3 is required for celery
+pip install -U celery[redis]
