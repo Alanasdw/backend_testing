@@ -37,3 +37,9 @@ https://docs.celeryproject.org/en/latest/reference/celery.bin.multi.html
 // for the worker machines
 // python3 is required for celery
 pip install -U celery[redis]
+
+// to make the things work
+// for server
+run redis and main.go
+// for worker
+celery -A tasks worker  -Ofair --concurrency=1
