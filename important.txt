@@ -43,3 +43,12 @@ pip install -U celery[redis]
 run redis and main.go
 // for worker
 celery -A tasks worker  -Ofair --concurrency=1
+
+
+// haveing to install the ./run
+sudo apt install flex bison libseccomp-dev protobuf-compiler
+// this is not enough to get the program up and running
+
+// to inspect active nodes
+celery -A tasks inspect  active
+
