@@ -6,10 +6,26 @@ https://stackoverflow.com/questions/15809811/celery-tasks-that-need-to-run-in-pr
 
 https://redis.io/topics/quickstart
 
-// this is for redis make test
-sudo apt-get install tcl
+https://stackoverflow.com/questions/9034091/how-to-check-task-status-in-celery
+
+https://docs.celeryproject.org/en/stable/userguide/monitoring.html#redis
+
+https://docs.celeryproject.org/en/stable/userguide/routing.html#redis-message-priorities
+
+https://medium.com/@taylorhughes/three-quick-tips-from-two-years-with-celery-c05ff9d7f9eb#d7ec
+
+https://docs.celeryproject.org/en/latest/userguide/tasks.html
+
+https://docs.celeryproject.org/en/latest/userguide/calling.html#results-options
 
 https://github.com/celery/celery/issues/4028
+
+https://github.com/Tendrid/celery-redis-priority-test
+
+https://hackmd.io/@YingMuo/NOJ_sandbox_document?fbclid=IwAR0QHKW2T4uq7pmCzDA9kxgK8CXwlVqqnJsxnOW8jxD2Vy0nu9PKXobbgkE
+
+// this is for redis make test
+sudo apt-get install tcl
 
 need to write a script to start up redis then start celery
 // maybe docker-compose?
@@ -42,13 +58,13 @@ pip install -U celery[redis]
 // for server
 run redis and main.go
 // for worker
-celery -A tasks worker  -Ofair --concurrency=1
+celery -A tasks worker -Ofair --concurrency=1 --loglevel=info
 
 
-// haveing to install the ./run
+// having to install the ./run
 sudo apt install flex bison libseccomp-dev protobuf-compiler
 // this is not enough to get the program up and running
 
 // to inspect active nodes
-celery -A tasks inspect  active
+celery -A tasks inspect active
 
