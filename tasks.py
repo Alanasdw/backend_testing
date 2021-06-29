@@ -25,6 +25,7 @@ def compile( source_name):
     #./run.sh CONTAINER_PATH LANG_ID COMPILED INPUT OUTPUT ERROR TIME_LIMIT MEMORY_LIMIT FILE_LIMIT SECCOMP_STRING
     # call something like gcc and the arguments inside
     return subprocess.call(['gcc', source_name])
+    # subprocess.checkoutput() this can get stdout/stderror
 
 @app.task
 def execute( source_name):

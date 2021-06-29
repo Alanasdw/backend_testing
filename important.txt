@@ -58,7 +58,7 @@ pip install -U celery[redis]
 // for server
 run redis and main.go
 // for worker
-celery -A tasks worker -Ofair --concurrency=1 --loglevel=info
+celery -A tasks worker -Ofair -E --concurrency=1 --loglevel=info --prefetch-multiplier=1
 
 
 // having to install the ./run

@@ -37,12 +37,12 @@ def execute( source_name):
 
 if __name__ == '__main__':
     #CONTAINER_PATH, LANG_ID, COMPILED, INPUT, OUTPUT, ERROR, TIME_LIMIT, MEMORY_LIMIT, FILE_LIMIT, SECCOMP_STRING
-    for i in range(10):
-        ar = add.apply_async((5456, 2878), priority = 90)
+    # for i in range(10):
+    ar = add.apply_async((5456, 2878), priority = 9)
     name = "test.c"
-    answer = compile.apply_async([name], priority = 10)
-
-    running = execute.apply_async(["./a.out"], priority = 5)
+    answer = compile.apply_async([name], priority = 5)
+    ar = add.apply_async((5456, 2878), priority = 9)
+    running = execute.apply_async(["./a.out"], priority = 0)
 
     print( AsyncResult( ar.task_id).ready())
 

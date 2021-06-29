@@ -62,6 +62,7 @@ func main() {
 
 	// run task
 	asyncResult, err := cli.Delay(taskName, argA, argB)
+	asyncResult2, err := cli.Delay(taskName, argA, argB)
 	importantResult, err := cli.Delay("tasks.important", argA, argB)
 	if err != nil {
 		panic(err)
@@ -71,6 +72,7 @@ func main() {
 
 	// get results from backend with timeout
 	res, err := asyncResult.Get(10 * time.Second)
+	res2, err := asyncResult2.Get(10 * time.Second)
 	resimportant, err := importantResult.Get(10 * time.Second)
 	if err != nil {
 		panic(err)
@@ -78,4 +80,5 @@ func main() {
 
 	log.Printf("result: %+v of type %+v", resimportant, reflect.TypeOf(resimportant))
 	log.Printf("result: %+v of type %+v", res, reflect.TypeOf(res))
+	log.Printf("result: %+v of type %+v", res2, reflect.TypeOf(res))
 }
