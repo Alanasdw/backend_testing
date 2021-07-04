@@ -22,6 +22,8 @@ https://github.com/celery/celery/issues/4028
 
 https://github.com/Tendrid/celery-redis-priority-test
 
+https://www.distributedpython.com/2018/10/26/celery-execution-pool/
+
 https://hackmd.io/@YingMuo/NOJ_sandbox_document?fbclid=IwAR0QHKW2T4uq7pmCzDA9kxgK8CXwlVqqnJsxnOW8jxD2Vy0nu9PKXobbgkE
 
 // this is for redis make test
