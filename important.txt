@@ -55,6 +55,8 @@ https://docs.celeryproject.org/en/latest/reference/celery.bin.multi.html
 // for the worker machines
 // python3 is required for celery
 pip install -U celery[redis]
+sudo apt install redis-server
+
 
 // to make the things work
 // for server
