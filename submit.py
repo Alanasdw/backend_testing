@@ -32,8 +32,9 @@ def execute( source_name):
     # call something like gcc and the arguments inside
     return subprocess.call(source_name)
 
-# highest priority 255
-# lowest/default priority 0
+# largest priority 255
+# smallest/default priority 0
+# redis priority is ( high, 0) -> ( low, 9)
 
 if __name__ == '__main__':
     #CONTAINER_PATH, LANG_ID, COMPILED, INPUT, OUTPUT, ERROR, TIME_LIMIT, MEMORY_LIMIT, FILE_LIMIT, SECCOMP_STRING
