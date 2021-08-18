@@ -26,11 +26,9 @@ def compare( strict: bool, answer_path: str, target_output_path: str, judge_outp
     judge = file.read()
     file.close()
 
-    if "success" not in judge:
+    if "SUCCESS" not in judge:
         # error conditions
-        status = "TLE"
-
-        return status
+        return judge
     
     file = open(answer_path,'r')
     answer = file.read()
