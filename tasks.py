@@ -3,8 +3,11 @@ import subprocess
 import time
 from datetime import datetime
 
-app = Celery('tasks', broker='redis://localhost', result_backend='redis://localhost')
-app.config_from_object('celeryconfig')
+app = Celery('tasks', broker='redis://localhost:6379', result_backend='redis://localhost:6379')
+# app.config_from_object('celeryconfig')
+app.conf.broker_transport_options = {
+    'queue_order_strategy': 'priority',
+}
 
 @app.task
 def add(x, y):
@@ -17,18 +20,34 @@ def important(x, y):
     return datetime.now()
 
 @app.task
+def compile( source_name):
+    #./run.sh CONTAINER_PATH LANG_ID COMPILED INPUT OUTPUT ERROR TIME_LIMIT MEMORY_LIMIT FILE_LIMIT SECCOMP_STRING
+    # call something like gcc and the arguments inside
+    return subprocess.call(['gcc', source_name])
+    # subprocess.checkoutput() this can get stdout/stderror
+
+@app.task
+def execute( source_name):
+    #./run.sh CONTAINER_PATH LANG_ID COMPILED INPUT OUTPUT ERROR TIME_LIMIT MEMORY_LIMIT FILE_LIMIT SECCOMP_STRING
+    # call something like gcc and the arguments inside
+    return subprocess.call(source_name)
+
+
+@app.task
 def run( CONTAINER_PATH, LANG_ID, COMPILED, INPUT, OUTPUT, ERROR, TIME_LIMIT, MEMORY_LIMIT, FILE_LIMIT, SECCOMP_STRING):
     return subprocess.call(['./run.sh', CONTAINER_PATH, LANG_ID, COMPILED, INPUT, OUTPUT, ERROR, TIME_LIMIT, MEMORY_LIMIT, FILE_LIMIT, SECCOMP_STRING])
 
 @app.task
 def compare( strict: bool, answer_path: str, target_output_path: str, judge_output_path: str) -> str:
     file = open(judge_output_path, 'r')
-    judge = file.read()
+    judge_out = file.read()
     file.close()
 
-    if "SUCCESS" not in judge:
+    result = [ item for item in judge_out.splitlines()]
+
+    if "SUCCESS" not in result[ 0]:
         # error conditions
-        return judge
+        return result[ 0]
     
     file = open(answer_path,'r')
     answer = file.read()
@@ -46,28 +65,14 @@ def compare( strict: bool, answer_path: str, target_output_path: str, judge_outp
             striped.pop(-1)
         return striped
     
-    result = "WA"
+    result[ 0] = "WA"
 
     if strict == False:
         answer = strip(answer)
         target = strip(target)
     
     if answer == target:
-        result = "AC"
+        result[ 0] = "AC"
     
-    return result
+    return result[ 0]
 
-
-@app.task
-def compile( source_name):
-    #./run.sh CONTAINER_PATH LANG_ID COMPILED INPUT OUTPUT ERROR TIME_LIMIT MEMORY_LIMIT FILE_LIMIT SECCOMP_STRING
-    # call something like gcc and the arguments inside
-    return subprocess.call(['gcc', source_name])
-    # subprocess.checkoutput() this can get stdout/stderror
-
-@app.task
-def execute( source_name):
-    #./run.sh CONTAINER_PATH LANG_ID COMPILED INPUT OUTPUT ERROR TIME_LIMIT MEMORY_LIMIT FILE_LIMIT SECCOMP_STRING
-    # call something like gcc and the arguments inside
-    return subprocess.call(source_name)
-    
