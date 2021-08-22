@@ -17,10 +17,6 @@ def add(x, y):
     return x + y
 
 @app.task
-def run( CONTAINER_PATH, LANG_ID, COMPILED, INPUT, OUTPUT, ERROR, TIME_LIMIT, MEMORY_LIMIT, FILE_LIMIT, SECCOMP_STRING):
-    return subprocess.call(['./run.sh', CONTAINER_PATH, LANG_ID, COMPILED, INPUT, OUTPUT, ERROR, TIME_LIMIT, MEMORY_LIMIT, FILE_LIMIT, SECCOMP_STRING])
-
-@app.task
 def compile( source_name):
     #./run.sh CONTAINER_PATH LANG_ID COMPILED INPUT OUTPUT ERROR TIME_LIMIT MEMORY_LIMIT FILE_LIMIT SECCOMP_STRING
     # call something like gcc and the arguments inside
@@ -31,6 +27,49 @@ def execute( source_name):
     #./run.sh CONTAINER_PATH LANG_ID COMPILED INPUT OUTPUT ERROR TIME_LIMIT MEMORY_LIMIT FILE_LIMIT SECCOMP_STRING
     # call something like gcc and the arguments inside
     return subprocess.call(source_name)
+
+@app.task
+def run( CONTAINER_PATH, LANG_ID, COMPILED, INPUT, OUTPUT, ERROR, TIME_LIMIT, MEMORY_LIMIT, FILE_LIMIT, SECCOMP_STRING):
+    return subprocess.call(['./run.sh', CONTAINER_PATH, LANG_ID, COMPILED, INPUT, OUTPUT, ERROR, TIME_LIMIT, MEMORY_LIMIT, FILE_LIMIT, SECCOMP_STRING])
+
+@app.task
+def compare( strict: bool, answer_path: str, target_output_path: str, judge_output_path: str) -> str:
+    file = open(judge_output_path, 'r')
+    judge_out = file.read()
+    file.close()
+
+    result = [ item for item in judge_out.splitlines()]
+
+    if "SUCCESS" not in result[ 0]:
+        # error conditions
+        return result[ 0]
+    
+    file = open(answer_path,'r')
+    answer = file.read()
+    file.close()
+
+    file = open(target_output_path,'r')
+    target = file.read()
+    file.close()
+
+    def strip(s: str):
+        # remove blanks at line end
+        striped = [ s.rstrip() for s in s.splitlines()]
+        # remove blanks at file end
+        while len( striped) and striped[-1] == '':
+            striped.pop(-1)
+        return striped
+    
+    result[ 0] = "WA"
+
+    if strict == False:
+        answer = strip(answer)
+        target = strip(target)
+    
+    if answer == target:
+        result[ 0] = "AC"
+    
+    return result[ 0]
 
 # largest priority 255
 # smallest/default priority 0
