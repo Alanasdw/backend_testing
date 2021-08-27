@@ -27,7 +27,7 @@ def compile( source_name):
     # subprocess.checkoutput() this can get stdout/stderror
 
 @app.task
-def execute( source_name):
+def execute( source_name: str):
     #./run.sh CONTAINER_PATH LANG_ID COMPILED INPUT OUTPUT ERROR TIME_LIMIT MEMORY_LIMIT FILE_LIMIT SECCOMP_STRING
     # call something like gcc and the arguments inside
     return subprocess.call(source_name)
@@ -35,7 +35,7 @@ def execute( source_name):
 
 @app.task
 def run( CONTAINER_PATH, LANG_ID, COMPILED, INPUT, OUTPUT, ERROR, TIME_LIMIT, MEMORY_LIMIT, FILE_LIMIT, SECCOMP_STRING):
-    return subprocess.call(['./run.sh', CONTAINER_PATH, LANG_ID, COMPILED, INPUT, OUTPUT, ERROR, TIME_LIMIT, MEMORY_LIMIT, FILE_LIMIT, SECCOMP_STRING])
+    return subprocess.call(['/home/linux/Desktop/nsjail/run.sh', CONTAINER_PATH, LANG_ID, COMPILED, INPUT, OUTPUT, ERROR, TIME_LIMIT, MEMORY_LIMIT, FILE_LIMIT, SECCOMP_STRING, '/home/linux/Desktop/nsjail/'])
 
 @app.task
 def compare( strict: bool, answer_path: str, target_output_path: str, judge_output_path: str) -> str:
@@ -45,7 +45,7 @@ def compare( strict: bool, answer_path: str, target_output_path: str, judge_outp
 
     result = [ item for item in judge_out.splitlines()]
 
-    if "SUCCESS" not in result[ 0]:
+    if "SUCCESS" != result[ 0]:
         # error conditions
         return result[ 0]
     

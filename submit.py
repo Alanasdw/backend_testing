@@ -1,4 +1,6 @@
+from threading import main_thread
 from celery import Celery
+import celery
 from celery.result import AsyncResult
 import time
 import subprocess
@@ -17,13 +19,18 @@ def add(x, y):
     return x + y
 
 @app.task
+def important(x, y):
+    time.sleep(10)
+    return datetime.now()
+
+@app.task
 def compile( source_name):
     #./run.sh CONTAINER_PATH LANG_ID COMPILED INPUT OUTPUT ERROR TIME_LIMIT MEMORY_LIMIT FILE_LIMIT SECCOMP_STRING
     # call something like gcc and the arguments inside
     return subprocess.call(['gcc', source_name])
 
 @app.task
-def execute( source_name):
+def execute( source_name: str):
     #./run.sh CONTAINER_PATH LANG_ID COMPILED INPUT OUTPUT ERROR TIME_LIMIT MEMORY_LIMIT FILE_LIMIT SECCOMP_STRING
     # call something like gcc and the arguments inside
     return subprocess.call(source_name)
@@ -76,21 +83,46 @@ def compare( strict: bool, answer_path: str, target_output_path: str, judge_outp
 # redis priority is ( high, 0) -> ( low, 9)
 
 if __name__ == '__main__':
-    #CONTAINER_PATH, LANG_ID, COMPILED, INPUT, OUTPUT, ERROR, TIME_LIMIT, MEMORY_LIMIT, FILE_LIMIT, SECCOMP_STRING
+    # CONTAINER_PATH, LANG_ID, COMPILED, INPUT, OUTPUT, ERROR, TIME_LIMIT, MEMORY_LIMIT, FILE_LIMIT, SECCOMP_STRING
+    # /home/linux/Desktop/backend_testing/ 0 0 /home/linux/Desktop/backend_testing/README.md /home/linux/Desktop/backend_testing/README.md /home/linux/Desktop/backend_testing/judge.txt 1 512 512 "read, newfstat, mmap, mprotect, munmap, newuname, arch_prctl, brk, access, exit_group, close, readlink, sysinfo, write, writev, lseek, clock_gettime, fcntl, pread64, openat, newstat"
+    # CONTAINER_PATH = "/home/linux/Desktop/backend_testing/"
+    # LANG_ID = "0"
+    # COMPILED = "0"
+    # INPUT = "/home/linux/Desktop/backend_testing/input.txt"
+    # OUTPUT = "/home/linux/Desktop/backend_testing/output.txt"
+    # ERROR = "/home/linux/Desktop/backend_testing/judge.txt"
+    # TIME_LIMIT = "10"
+    # MEMORY_LIMIT = "512"
+    # FILE_LIMIT = "512"
+    # SECCOMP_STRING = "read, newfstat, mmap, mprotect, munmap, newuname, arch_prctl, brk, access, exit_group, close, readlink, sysinfo, write, writev, lseek, clock_gettime, fcntl, pread64, openat, newstat"
+
+    # testing = run.apply_async([CONTAINER_PATH, LANG_ID, COMPILED, INPUT, OUTPUT, ERROR, TIME_LIMIT, MEMORY_LIMIT, FILE_LIMIT, SECCOMP_STRING], priority = 9)
+    # print(testing.get())
+    s = "./main"
+    executing = celery.signature( 'tasks.execute', args=[s], immutable=True, priority=4)
+    c = celery.chain( executing, compare.signature([False,"/home/linux/Desktop/backend_testing/answer.txt","/home/linux/Desktop/backend_testing/output.txt","/home/linux/Desktop/backend_testing/judge.txt"], immutable=True, priority=0))
+    g = celery.group( [important.s(y,y).set(priority=9) for y in range(4)] + [add.s(x,x).set(priority=7) for x in range(10)])
+    res2 = g()
+    res = c()
+
+    print(res.get())
+    print(res2.get())
+
+
     # for i in range(10):
-    ar = add.apply_async((5456, 2878), priority = 9)
-    name = "test.c"
-    answer = compile.apply_async([name], priority = 5)
-    ar = add.apply_async((5456, 2878), priority = 9)
-    running = execute.apply_async(["./a.out"], priority = 0)
+    # ar = add.apply_async((5456, 2878), priority = 9)
+    # name = "test.c"
+    # answer = compile.apply_async([name], priority = 5)
+    # ar = add.apply_async((5456, 2878), priority = 9)
+    # running = execute.apply_async(["./a.out"], priority = 0)
 
-    print( AsyncResult( ar.task_id).ready())
+    # print( AsyncResult( ar.task_id).ready())
 
-    print( ar.get())
-    print( answer.get())
-    print( running.get())
+    # print( ar.get())
+    # print( answer.get())
+    # print( running.get())
 
-    print( AsyncResult( ar.task_id).ready())
+    # print( AsyncResult( ar.task_id).ready())
 
     # # how the code could look like
     # # all the code should look like main.*

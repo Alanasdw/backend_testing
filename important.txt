@@ -50,6 +50,7 @@ https://docs.celeryproject.org/en/latest/reference/celery.bin.multi.html
 // 1 compiler worker and 30 running workers per machine?
 // the compiled program will sit in the same glusterfs as other test case inputs?
 
+// need to look into groups and chains from in celery
 
 
 // for the worker machines
