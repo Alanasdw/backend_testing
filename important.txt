@@ -66,6 +66,9 @@ run redis and main.go
 celery -A tasks worker -Ofair -E --concurrency=1 --loglevel=info --prefetch-multiplier=1
 
 
+// for daemonize
+// https://kitcharoenp.github.io/celery/2019/03/11/celery_worker_as_daemon.html
+
 // having to install the ./run
 sudo apt install flex bison libseccomp-dev protobuf-compiler
 // this is not enough to get the program up and running

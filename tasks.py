@@ -8,6 +8,7 @@ app = Celery('tasks', broker='redis://localhost:6379', result_backend='redis://l
 app.conf.broker_transport_options = {
     'queue_order_strategy': 'priority',
 }
+# app.conf.task_send_succeeded_task = True
 
 @app.task
 def add(x, y):
@@ -39,6 +40,7 @@ def run( CONTAINER_PATH, LANG_ID, COMPILED, INPUT, OUTPUT, ERROR, TIME_LIMIT, ME
 
 @app.task
 def compare( strict: bool, answer_path: str, target_output_path: str, judge_output_path: str) -> str:
+    # ['SUCCESS','RE','TLE','OLE','MLE','JGE','CE','NO SRC']
     file = open(judge_output_path, 'r')
     judge_out = file.read()
     file.close()

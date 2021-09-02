@@ -14,6 +14,8 @@ app.conf.broker_transport_options = {
     'queue_order_strategy': 'priority',
 }
 
+# app.conf.task_send_succeeded_task = True
+
 @app.task
 def add(x, y):
     return x + y
@@ -99,9 +101,9 @@ if __name__ == '__main__':
     # testing = run.apply_async([CONTAINER_PATH, LANG_ID, COMPILED, INPUT, OUTPUT, ERROR, TIME_LIMIT, MEMORY_LIMIT, FILE_LIMIT, SECCOMP_STRING], priority = 9)
     # print(testing.get())
     s = "./main"
-    executing = celery.signature( 'tasks.execute', args=[s], immutable=True, priority=4)
+    executing = celery.signature( 'tasks.execute', args=[s] , immutable=False, priority=4)
     c = celery.chain( executing, compare.signature([False,"/home/linux/Desktop/backend_testing/answer.txt","/home/linux/Desktop/backend_testing/output.txt","/home/linux/Desktop/backend_testing/judge.txt"], immutable=True, priority=0))
-    g = celery.group( [important.s(y,y).set(priority=9) for y in range(4)] + [add.s(x,x).set(priority=7) for x in range(10)])
+    g = celery.group( [important.s(y,y).set(priority=9) for y in range(6)] + [add.s(x,x).set(priority=7) for x in range(10)])
     res2 = g()
     res = c()
 
